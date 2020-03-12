@@ -1,4 +1,4 @@
-import jsonplaceholder.json as jsonplaceholder ~swagger
+import jsonplaceholder.sysl
 
 jsonplaceholder:
     @package = "jsonplaceholder"

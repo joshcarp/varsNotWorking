@@ -31,14 +31,12 @@ func NewClient(client *http.Client, serviceURL string) *Client {
 // GetTodos ...
 func (s *Client) GetTodos(ctx context.Context, req *GetTodosRequest) (*TodosResponse, error) {
 	required := []string{}
-	var okResponse TodosResponse
-
 	u, err := url.Parse(fmt.Sprintf("%s/todos/%v", s.url, req.ID))
 	if err != nil {
 		return nil, common.CreateError(ctx, common.InternalError, "failed to parse url", err)
 	}
 
-	result, err := restlib.DoHTTPRequest(ctx, s.client, "GET", u.String(), nil, required, &okResponse, nil)
+	result, err := restlib.DoHTTPRequest(ctx, s.client, "GET", u.String(), nil, required, nil, nil)
 	if err != nil {
 		return nil, common.CreateError(ctx, common.DownstreamUnavailableError, "call failed: jsonplaceholder <- GET "+u.String(), err)
 	}
@@ -47,14 +45,14 @@ func (s *Client) GetTodos(ctx context.Context, req *GetTodosRequest) (*TodosResp
 		return nil, common.CreateDownstreamError(ctx, common.DownstreamUnauthorizedError, result.HTTPResponse, result.Body, nil)
 	}
 
-	OkTodosResponseResponse, ok := result.Response.(*TodosResponse)
+	PayloadTodosResponseResponse, ok := result.Response.(*TodosResponse)
 	if ok {
-		valErr := validator.Validate(OkTodosResponseResponse)
+		valErr := validator.Validate(PayloadTodosResponseResponse)
 		if valErr != nil {
 			return nil, common.CreateDownstreamError(ctx, common.DownstreamUnexpectedResponseError, result.HTTPResponse, result.Body, valErr)
 		}
 
-		return OkTodosResponseResponse, nil
+		return PayloadTodosResponseResponse, nil
 	}
 
 	return nil, common.CreateDownstreamError(ctx, common.DownstreamUnexpectedResponseError, result.HTTPResponse, result.Body, nil)

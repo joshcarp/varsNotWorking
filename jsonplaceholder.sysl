@@ -1,0 +1,23 @@
+jsonplaceholder "jsonplaceholder" [package="jsonplaceholder"]:
+    @version = "1.0"
+    @host = "jsonplaceholder"
+    @description =:
+        | No description.
+
+    /todos/{id<:int}:
+        GET:
+            # See this doesn't have ok <:
+            return todosResponse
+
+    #---------------------------------------------------------------------------
+    # definitions
+
+    !type todosResponse:
+        completed <: bool?:
+            @json_tag = "completed"
+        id <: float?:
+            @json_tag = "id"
+        title <: string?:
+            @json_tag = "title"
+        userId <: float?:
+            @json_tag = "userId"
